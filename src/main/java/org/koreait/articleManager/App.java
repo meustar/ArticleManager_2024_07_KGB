@@ -43,9 +43,9 @@ public class App {
             } else if (cmd.equals("article detail")) {
                 System.out.println();
             } else if (cmd.equals("article modify")) {
-
+                System.out.println();
             } else if (cmd.equals("article delete")) {
-
+                System.out.println();
             }
         }
     }
