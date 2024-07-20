@@ -34,6 +34,8 @@ public class App {
                 cmd = sc.nextLine();
                 System.out.print("내용: ");
                 cmd = sc.nextLine();
+
+
                 System.out.printf("%d번 글이 작성되었습니다.",id);
                 id++;
 
