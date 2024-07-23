@@ -35,12 +35,14 @@ public class App {
             if(cmd.equals("article write")){
                 System.out.println("== 게시글 작성 ==");
                 int id = lastArticleId + 1;
+                String regDate = Util.getNow();
+                String updateDate = regDate;
                 System.out.print("제목: ");
                 String title = sc.nextLine();
                 System.out.print("내용: ");
                 String body = sc.nextLine();
 
-                Article article = new Article(id, title, body);
+                Article article = new Article(id, regDate, updateDate, title, body);
                 articles.add(article);
 
                 System.out.println(id +"번 글이 작성되었습니다.");
