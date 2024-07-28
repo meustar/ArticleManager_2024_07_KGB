@@ -1,5 +1,7 @@
 package org.koreait.articleManager;
 
+import org.koreait.system.SystemController;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,6 +9,8 @@ import java.util.Scanner;
 public class App {
 
     Scanner sc;
+
+    static List<Article> articles = new ArrayList<>();
 
     public App(Scanner sc) {
         this.sc = sc;
@@ -25,7 +29,7 @@ public class App {
             cmd = sc.nextLine();
 
             if (cmd.equals("exit")) {
-                System.out.println("프로그램을 종료합니다.");
+                SystemController.exit();            // SystemController 를 static으로 만들어서 new 하지 않고 바로 쓸수 있다.
                 break;
             } else if (cmd.length() == 0) {
                 System.out.println("명령어를 입력해주세요.");
@@ -66,20 +70,15 @@ public class App {
 
                 int id = Integer.parseInt(cmd.split(" ")[2]);
 
-                Article foundArticle = null;
-
-                for(Article article : articles) {
-                    if (article.getId() == id) {
-                        foundArticle = article;
-                        break;
-                    }
-                }
+                Article foundArticle = getArticlebyId(id);
 
                 if (foundArticle == null) {
                     System.out.println("해당 게시글이 없습니다.");
                     continue;
                 }
                 System.out.println("번호 : " + foundArticle.getId());
+                System.out.println("작성날짜 : " + foundArticle.getRegDate());
+                System.out.println("수정날짜 : "+ foundArticle.getUpdateDate());
                 System.out.println("제목 : " + foundArticle.getTitle());
                 System.out.println("내용 : " + foundArticle.getBody());
 
@@ -135,5 +134,15 @@ public class App {
             }
         }
         sc.close();
+    }
+
+    private Article getArticlebyId(int id) {
+
+        for (Article article : articles ) {
+            if(article.getId() == id) {
+                return article;
+            }
+        }
+        return null;
     }
 }
