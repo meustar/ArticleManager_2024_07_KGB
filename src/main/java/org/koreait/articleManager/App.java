@@ -87,14 +87,8 @@ public class App {
 
                 int id = Integer.parseInt(cmd.split(" ")[2]);
 
-                Article foundArticle = null;
+                Article foundArticle = getArticlebyId(id);
 
-                for(Article article : articles) {
-                    if (article.getId() == id) {
-                        foundArticle = article;
-                        break;
-                    }
-                }
 
                 if (foundArticle == null) {
                     System.out.println("해당 게시글이 없습니다.");
@@ -109,28 +103,23 @@ public class App {
 
                 foundArticle.setTitle(newTitle);
                 foundArticle.setBody(newBody);
+                foundArticle.setUpdateDate(Util.getNow());
 
-                System.out.println(id + "해당 글이 수정되었습니다.");
+                System.out.println(foundArticle.getId() + "해당 글이 수정되었습니다.");
             } else if (cmd.equals("article delete")) {
                 System.out.println("== 게시글 삭제 ==");
 
                 int id = Integer.parseInt(cmd.split(" ")[2]);
 
-                Article foundArticle = null;
+                Article foundArticle = getArticlebyId(id);
 
-                for(Article article : articles) {
-                    if (article.getId() == id) {
-                        foundArticle = article;
-                        break;
-                    }
-                }
 
                 if (foundArticle == null) {
                     System.out.println("해당 게시글이 없습니다.");
                     continue;
                 }
                 articles.remove(foundArticle);
-                System.out.println(id + "번 게시글이 삭제되었습니다.");
+                System.out.println(foundArticle.getId() + "번 게시글이 삭제되었습니다.");
             }
         }
         sc.close();
