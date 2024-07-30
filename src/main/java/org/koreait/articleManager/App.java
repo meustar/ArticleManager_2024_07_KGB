@@ -19,6 +19,7 @@ public class App {
 
     public void run() {
         int lastArticleId = 0;
+        int lastMemberId = 0;
         String cmd;
 
         List<Article> articles = new ArrayList<>();
@@ -120,7 +121,42 @@ public class App {
                 }
                 articles.remove(foundArticle);
                 System.out.println(foundArticle.getId() + "번 게시글이 삭제되었습니다.");
+            } else if (cmd.equals("member join")) {
+                System.out.println("== 회원가입 == ");
+                int id = lastMemberId + 1;
+                String regDate = Util.getNow();
+                String loginId = null;
+
+                while (true) {
+                    System.out.print("로그인 아이디 : ");
+                    loginId = sc.nextLine().trim();
+                    if (isJoinableLoginId(loginId) == false) {
+                        System.out.println("이미 사용중인 아이디 입니다.");
+                        continue;
+                    }
+                    break;
+                }
+                String loginPw = null;
+                while (true) {
+                    System.out.print("비밀번호 : ");
+                    loginPw = sc.nextLine();
+                    System.out.print("비밀번호 확인 : ");
+                    String loginPwConfirm = sc.nextLine();
+
+                    if (loginPw.equals(loginPwConfirm) == false) {
+                        System.out.println("비밀번호를 다시 확인해주세요. : ");
+                        continue;
+                    }
+                    break;
+                }
+
+                System.out.print("이름 : ");
+                String name = sc.nextLine();
+
+                Member member = new Member(id, regDate, loginId, loginPw, name);
+                members.add(member);
             }
+
         }
         sc.close();
     }
