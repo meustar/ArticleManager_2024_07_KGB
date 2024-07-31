@@ -1,5 +1,7 @@
 package org.koreait.articleManager;
 
+import org.koreait.controller.ArticleController;
+import org.koreait.controller.MemberController;
 import org.koreait.system.SystemController;
 
 import java.util.ArrayList;
@@ -8,26 +10,24 @@ import java.util.Scanner;
 
 public class App {
 
-    Scanner sc;
+    List<Article> articles;
 
-    static List<Article> articles = new ArrayList<>();
-
-    public App(Scanner sc) {
-        this.sc = sc;
-
+    public App() {
+        articles = new ArrayList<>();
     }
 
     public void run() {
-        int lastArticleId = 0;
-        int lastMemberId = 0;
-        String cmd;
 
-        List<Article> articles = new ArrayList<>();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("== 프로그램 시작 ==");
+
+        MemberController memberController = new MemberController(sc);
+        ArticleController articleController = new ArticleController(sc);
 
         while (true) {
 
             System.out.print("명령어 : ");
-            cmd = sc.nextLine();
+            String cmd = sc.nextLine();
 
             if (cmd.equals("exit")) {
                 SystemController.exit();            // SystemController 를 static으로 만들어서 new 하지 않고 바로 쓸수 있다.
@@ -36,138 +36,23 @@ public class App {
                 System.out.println("명령어를 입력해주세요.");
                 continue;
             }
-
             if(cmd.equals("article write")){
-                System.out.println("== 게시글 작성 ==");
-                int id = lastArticleId + 1;
-                String regDate = Util.getNow();
-                String updateDate = regDate;
-                System.out.print("제목: ");
-                String title = sc.nextLine();
-                System.out.print("내용: ");
-                String body = sc.nextLine();
-
-                Article article = new Article(id, regDate, updateDate, title, body);
-                articles.add(article);
-
-                System.out.println(id +"번 글이 작성되었습니다.");
-                lastArticleId++;
-
+                ArticleController.doWrite();
             } else if (cmd.equals("article list")) {
-                System.out.println("== 게시글 목록 ==");
-                if(articles.size() == 0) {
-                    System.out.println("게시글이 존재하지 않습니다.");
-                } else {
-                    System.out.println("번호//    제목  //      내용      //");
-                    for (int i = articles.size() - 1; i >= 0; i--) {
-                        Article article = articles.get(i);
-                        System.out.printf(" %d //    %s  //      %s      //\n", article.getId(),article.getTitle(),article.getBody());
-                    }
-                }
-
-
+                ArticleController.showList(cmd);
             } else if (cmd.equals("article detail")) {
-                System.out.println("== 게시글 상세보기 ==");
-
-                int id = Integer.parseInt(cmd.split(" ")[2]);
-
-                Article foundArticle = getArticlebyId(id);
-
-                if (foundArticle == null) {
-                    System.out.println("해당 게시글이 없습니다.");
-                    continue;
-                }
-                System.out.println("번호 : " + foundArticle.getId());
-                System.out.println("작성날짜 : " + foundArticle.getRegDate());
-                System.out.println("수정날짜 : "+ foundArticle.getUpdateDate());
-                System.out.println("제목 : " + foundArticle.getTitle());
-                System.out.println("내용 : " + foundArticle.getBody());
-
+                ArticleController.showDetail(cmd);
             } else if (cmd.equals("article modify")) {
-                System.out.println("== 게시글 수정 ==");
-
-                int id = Integer.parseInt(cmd.split(" ")[2]);
-
-                Article foundArticle = getArticlebyId(id);
-
-
-                if (foundArticle == null) {
-                    System.out.println("해당 게시글이 없습니다.");
-                    continue;
-                }
-                System.out.println("기존 제목 : " + foundArticle.getTitle());
-                System.out.println("기존 내용 : " + foundArticle.getBody());
-                System.out.print("새 제목 : ");
-                String newTitle = sc.nextLine();
-                System.out.print("새 내용 : ");
-                String newBody = sc.nextLine();
-
-                foundArticle.setTitle(newTitle);
-                foundArticle.setBody(newBody);
-                foundArticle.setUpdateDate(Util.getNow());
-
-                System.out.println(foundArticle.getId() + "해당 글이 수정되었습니다.");
+                ArticleController.doModify(cmd);
             } else if (cmd.equals("article delete")) {
-                System.out.println("== 게시글 삭제 ==");
-
-                int id = Integer.parseInt(cmd.split(" ")[2]);
-
-                Article foundArticle = getArticlebyId(id);
-
-
-                if (foundArticle == null) {
-                    System.out.println("해당 게시글이 없습니다.");
-                    continue;
-                }
-                articles.remove(foundArticle);
-                System.out.println(foundArticle.getId() + "번 게시글이 삭제되었습니다.");
+                ArticleController.doDelete(cmd);
             } else if (cmd.equals("member join")) {
-                System.out.println("== 회원가입 == ");
-                int id = lastMemberId + 1;
-                String regDate = Util.getNow();
-                String loginId = null;
-
-                while (true) {
-                    System.out.print("로그인 아이디 : ");
-                    loginId = sc.nextLine().trim();
-                    if (isJoinableLoginId(loginId) == false) {
-                        System.out.println("이미 사용중인 아이디 입니다.");
-                        continue;
-                    }
-                    break;
-                }
-                String loginPw = null;
-                while (true) {
-                    System.out.print("비밀번호 : ");
-                    loginPw = sc.nextLine();
-                    System.out.print("비밀번호 확인 : ");
-                    String loginPwConfirm = sc.nextLine();
-
-                    if (loginPw.equals(loginPwConfirm) == false) {
-                        System.out.println("비밀번호를 다시 확인해주세요. : ");
-                        continue;
-                    }
-                    break;
-                }
-
-                System.out.print("이름 : ");
-                String name = sc.nextLine();
-
-                Member member = new Member(id, regDate, loginId, loginPw, name);
-                members.add(member);
+                memberController.doJoin();
+            } else {
+                System.out.println("사용할 수 없는 명령어 입니다.");
             }
-
         }
+        System.out.println("== 프로그램 종료 ==");
         sc.close();
-    }
-
-    private Article getArticlebyId(int id) {
-
-        for (Article article : articles ) {
-            if(article.getId() == id) {
-                return article;
-            }
-        }
-        return null;
     }
 }
