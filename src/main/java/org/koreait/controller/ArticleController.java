@@ -41,13 +41,32 @@ public class ArticleController {
         System.out.println("== 게시글 목록 ==");
         if(articles.size() == 0) {
             System.out.println("게시글이 존재하지 않습니다.");
-        } else {
-            System.out.println("번호//    제목  //      내용      //");
-            for (int i = articles.size() - 1; i >= 0; i--) {
-                Article article = articles.get(i);
+        }
+        String searchKeyword = cmd.substring("article list ".length()).trim();
+
+        List<Article> forPrintArticles = articles;
+
+        for ( Article article : articles) {
+            if(article.getTitle().contains(searchKeyword)) {
+                forPrintArticles.add(article);
+            }
+            if (forPrintArticles.size() == 0) {
+                System.out.println("번호//    제목  //      내용      //");
+                System.out.println("검색 결과가 없습니다.");
+                return;
+            }
+        }
+        System.out.println("번호//    제목  //      내용      //");
+        for (int i = articles.size() - 1; i >= 0; i--) {
+            Article article = articles.get(i);
+
+            if ( Util.getNow().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
+                System.out.printf(" %d //    %s  //      %s      //\n", article.getId(),article.getTitle(),article.getBody());
+            } else {
                 System.out.printf(" %d //    %s  //      %s      //\n", article.getId(),article.getTitle(),article.getBody());
             }
         }
+
     }
 
     public void showDetail(String cmd) {
@@ -59,7 +78,7 @@ public class ArticleController {
 
         if (foundArticle == null) {
             System.out.println("해당 게시글이 없습니다.");
-            continue;
+            return;
         }
         System.out.println("번호 : " + foundArticle.getId());
         System.out.println("작성날짜 : " + foundArticle.getRegDate());
@@ -78,7 +97,7 @@ public class ArticleController {
 
         if (foundArticle == null) {
             System.out.println("해당 게시글이 없습니다.");
-            continue;
+            return;
         }
         System.out.println("기존 제목 : " + foundArticle.getTitle());
         System.out.println("기존 내용 : " + foundArticle.getBody());
@@ -104,7 +123,7 @@ public class ArticleController {
 
         if (foundArticle == null) {
             System.out.println("해당 게시글이 없습니다.");
-            continue;
+            return;
         }
         articles.remove(foundArticle);
         System.out.println(foundArticle.getId() + "번 게시글이 삭제되었습니다.");
