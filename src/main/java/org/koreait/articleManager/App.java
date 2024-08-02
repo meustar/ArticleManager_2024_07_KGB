@@ -4,17 +4,9 @@ import org.koreait.controller.ArticleController;
 import org.koreait.controller.MemberController;
 import org.koreait.system.SystemController;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class App {
-
-    List<Article> articles;
-
-    public App() {
-        articles = new ArrayList<>();
-    }
 
     public void run() {
 
@@ -27,7 +19,7 @@ public class App {
         while (true) {
 
             System.out.print("명령어 : ");
-            String cmd = sc.nextLine();
+            String cmd = sc.nextLine().trim();
 
             if (cmd.equals("exit")) {
                 SystemController.exit();            // SystemController 를 static으로 만들어서 new 하지 않고 바로 쓸수 있다.
@@ -37,15 +29,15 @@ public class App {
                 continue;
             }
             if(cmd.equals("article write")){
-                ArticleController.doWrite();
+                articleController.doWrite();
             } else if (cmd.equals("article list")) {
-                ArticleController.showList(cmd);
+                articleController.showList(cmd);
             } else if (cmd.equals("article detail")) {
-                ArticleController.showDetail(cmd);
+                articleController.showDetail(cmd);
             } else if (cmd.equals("article modify")) {
-                ArticleController.doModify(cmd);
+                articleController.doModify(cmd);
             } else if (cmd.equals("article delete")) {
-                ArticleController.doDelete(cmd);
+                articleController.doDelete(cmd);
             } else if (cmd.equals("member join")) {
                 memberController.doJoin();
             } else {
@@ -53,6 +45,7 @@ public class App {
             }
         }
         System.out.println("== 프로그램 종료 ==");
+
         sc.close();
     }
 }
